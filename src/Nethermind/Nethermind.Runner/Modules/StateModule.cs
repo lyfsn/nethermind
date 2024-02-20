@@ -119,6 +119,7 @@ public class StateModule: Module
         builder.RegisterType<TrieStore>()
             .WithAttributeFiltering()
             .SingleInstance()
+            .As<IPruningTrieStore>()
             .As<ITrieStore>();
         builder.RegisterType<WorldState>()
             .WithAttributeFiltering()
