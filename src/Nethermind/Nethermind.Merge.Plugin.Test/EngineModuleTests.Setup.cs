@@ -38,6 +38,7 @@ using Nethermind.Specs.ChainSpecStyle;
 using Nethermind.Specs.Forks;
 using Nethermind.State;
 using Nethermind.Synchronization.ParallelSync;
+using Nethermind.Synchronization.Peers;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -119,6 +120,7 @@ public partial class EngineModuleTests
                 chain.BeaconPivot,
                 peerRefresher,
                 chain.SpecProvider,
+                chain.SyncPeerPool,
                 chain.LogManager,
                 new BlocksConfig().SecondsPerSlot),
             new GetPayloadBodiesByHashV1Handler(chain.BlockTree, chain.LogManager),
@@ -146,6 +148,8 @@ public partial class EngineModuleTests
 
         public IWithdrawalProcessor? WithdrawalProcessor { get; set; }
 
+        public ISyncPeerPool SyncPeerPool { get; set; }
+
         protected int _blockProcessingThrottle = 0;
         private readonly Action<ContainerBuilder>? _containerMutator = null;
 
@@ -171,6 +175,7 @@ public partial class EngineModuleTests
             MergeConfig = mergeConfig ?? new MergeConfig() { TerminalTotalDifficulty = "0" };
             PayloadPreparationService = mockedPayloadPreparationService;
             _containerMutator = containerMutator;
+            SyncPeerPool = Substitute.For<ISyncPeerPool>();
         }
 
         protected override Task AddBlocksOnStart() => Task.CompletedTask;

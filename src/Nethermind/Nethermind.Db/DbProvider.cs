@@ -6,6 +6,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using Autofac;
+using Autofac.Core;
+using Nethermind.Core;
 
 namespace Nethermind.Db
 {
@@ -29,6 +31,11 @@ namespace Nethermind.Db
         public IColumnsDb<T> GetColumnDb<T>(string dbName)
         {
             return _ctx.ResolveNamed<IColumnsDb<T>>(dbName);
+        }
+
+        public IEnumerable<KeyValuePair<string, IDbMeta>> GetAllDbMeta()
+        {
+            return _ctx.Resolve<IEnumerable<KeyValuePair<string, IDbMeta>>>();
         }
     }
 }

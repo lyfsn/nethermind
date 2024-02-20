@@ -245,6 +245,7 @@ public class OptimismPlugin : IConsensusPlugin, ISynchronizationPlugin
                 _beaconPivot,
                 _peerRefresher,
                 _api.SpecProvider,
+                _api.SyncPeerPool!,
                 _api.LogManager,
                 _api.Config<IBlocksConfig>().SecondsPerSlot,
                 _api.Config<IMergeConfig>().SimulateBlockProduction),

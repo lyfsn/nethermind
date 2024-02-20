@@ -89,10 +89,6 @@ public class InitializeStateDb : IStep
 
         if (_pruningConfig.Mode.IsFull())
         {
-            _fullPruningDb.PruningStarted += (_, args) =>
-            {
-                _trieStore.PersistCache(args.Context, args.Context.CancellationTokenSource.Token);
-            };
             _ctx.Resolve<FullPruner>();
         }
 

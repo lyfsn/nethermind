@@ -29,6 +29,7 @@ namespace Nethermind.State
         internal readonly StateProvider _stateProvider;
         internal readonly PersistentStorageProvider _persistentStorageProvider;
         private readonly TransientStorageProvider _transientStorageProvider;
+        private readonly ITrieStore _trieStore;
 
         public Hash256 StateRoot
         {
@@ -42,6 +43,7 @@ namespace Nethermind.State
 
         public WorldState(ITrieStore? trieStore, [KeyFilter(DbNames.Code)] IKeyValueStore? codeDb, ILogManager? logManager)
         {
+            _trieStore = trieStore;
             _stateProvider = new StateProvider(trieStore, codeDb, logManager);
             _persistentStorageProvider = new PersistentStorageProvider(trieStore, _stateProvider, logManager);
             _transientStorageProvider = new TransientStorageProvider(logManager);
@@ -211,9 +213,7 @@ namespace Nethermind.State
 
         public bool HasStateForRoot(Hash256 stateRoot)
         {
-            RootCheckVisitor visitor = new();
-            Accept(visitor, stateRoot);
-            return visitor.HasRoot;
+            return _trieStore.HasRoot(stateRoot);
         }
 
         public void Commit(IReleaseSpec releaseSpec, bool isGenesis = false)

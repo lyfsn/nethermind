@@ -79,21 +79,21 @@ public class DatabaseModule : Module
 
 
         // TODO: Move these to their respective module. They don't need to be in the same place anymore.
-        RegisterDb(builder, DbNames.Blocks, () => Metrics.BlocksDbReads++, () => Metrics.BlocksDbWrites++);
-        RegisterDb(builder, DbNames.Headers, () => Metrics.HeaderDbReads++, () => Metrics.HeaderDbWrites++);
-        RegisterDb(builder, DbNames.BlockNumbers, () => Metrics.BlockNumberDbReads++, () => Metrics.BlockNumberDbWrites++);
-        RegisterDb(builder, DbNames.BlockInfos, () => Metrics.BlockInfosDbReads++, () => Metrics.BlockInfosDbWrites++);
-        RegisterDb(builder, DbNames.BadBlocks, () => Metrics.BadBlocksDbReads++, () => Metrics.BadBlocksDbWrites++);
-        RegisterDb(builder, DbNames.Code, () => Metrics.CodeDbReads++, () => Metrics.CodeDbWrites++);
-        RegisterDb(builder, DbNames.Bloom, () => Metrics.BloomDbReads++, () => Metrics.BloomDbWrites++);
-        RegisterDb(builder, DbNames.CHT, () => Metrics.CHTDbReads++, () => Metrics.CHTDbWrites++);
-        RegisterDb(builder, DbNames.Witness, () => Metrics.WitnessDbReads++, () => Metrics.WitnessDbWrites++);
-        RegisterDb(builder, DbNames.Metadata, () => Metrics.MetadataDbReads++, () => Metrics.MetadataDbWrites++);
+        RegisterDb(builder, DbNames.Blocks);
+        RegisterDb(builder, DbNames.Headers);
+        RegisterDb(builder, DbNames.BlockNumbers);
+        RegisterDb(builder, DbNames.BlockInfos);
+        RegisterDb(builder, DbNames.BadBlocks);
+        RegisterDb(builder, DbNames.Code);
+        RegisterDb(builder, DbNames.Bloom);
+        RegisterDb(builder, DbNames.CHT);
+        RegisterDb(builder, DbNames.Witness);
+        RegisterDb(builder, DbNames.Metadata);
 
-        RegisterColumnsDb<ReceiptsColumns>(builder, DbNames.Receipts, () => Metrics.ReceiptsDbReads++, () => Metrics.ReceiptsDbWrites++, readOnly: !_storeReceipts);
+        RegisterColumnsDb<ReceiptsColumns>(builder, DbNames.Receipts, readOnly: !_storeReceipts);
 
         // Note: this is lazy
-        RegisterColumnsDb<BlobTxsColumns>(builder, DbNames.BlobTransactions, () => Metrics.BlobTransactionsDbReads++, () => Metrics.BlobTransactionsDbWrites++);
+        RegisterColumnsDb<BlobTxsColumns>(builder, DbNames.BlobTransactions);
 
         builder.Register<IDbFactory, IFileSystem, FullPruningDb>(StateDbFactory)
             .Keyed<IDb>(DbNames.State)
@@ -108,7 +108,7 @@ public class DatabaseModule : Module
 
     private static FullPruningDb StateDbFactory(IDbFactory dbFactory, IFileSystem fileSystem)
     {
-        DbSettings stateDbSettings = BuildDbSettings(DbNames.State, () => Metrics.StateDbReads++, () => Metrics.StateDbWrites++);
+        DbSettings stateDbSettings = BuildDbSettings(DbNames.State);
         return new FullPruningDb(
             stateDbSettings,
             dbFactory is not MemDbFactory
@@ -117,16 +117,17 @@ public class DatabaseModule : Module
             () => Interlocked.Increment(ref Metrics.StateDbInPruningWrites));
     }
 
-    private static void RegisterDb(ContainerBuilder builder, string dbName, Action updateReadsMetrics, Action updateWriteMetrics)
+    private static void RegisterDb(ContainerBuilder builder, string dbName)
     {
-        builder.Register<IDbFactory, IDb>((dbFactory) => dbFactory.CreateDb(BuildDbSettings(dbName, updateReadsMetrics, updateWriteMetrics)))
+        // TODO: The named IDbMeta for metrics.
+        builder.Register<IDbFactory, IDb>((dbFactory) => dbFactory.CreateDb(BuildDbSettings(dbName)))
             .Keyed<IDb>(dbName)
             .Keyed<IKeyValueStoreWithBatching>(dbName)
             .Keyed<IKeyValueStore>(dbName)
             .SingleInstance();
     }
 
-    private static void RegisterColumnsDb<T>(ContainerBuilder builder, string dbName, Action updateReadsMetrics, Action updateWriteMetrics, bool readOnly = false) where T : struct, Enum
+    private static void RegisterColumnsDb<T>(ContainerBuilder builder, string dbName, bool readOnly = false) where T : struct, Enum
     {
         Func<IDbFactory, IColumnsDb<T>> factory;
         if (readOnly)
@@ -135,7 +136,7 @@ public class DatabaseModule : Module
         }
         else
         {
-            factory = (dbFactory) => dbFactory.CreateColumnsDb<T>(BuildDbSettings(dbName, updateReadsMetrics, updateWriteMetrics));
+            factory = (dbFactory) => dbFactory.CreateColumnsDb<T>(BuildDbSettings(dbName));
         }
 
         builder.Register(factory)
@@ -146,12 +147,10 @@ public class DatabaseModule : Module
 
     private static string GetTitleDbName(string dbName) => char.ToUpper(dbName[0]) + dbName[1..];
 
-    private static DbSettings BuildDbSettings(string dbName, Action updateReadsMetrics, Action updateWriteMetrics, bool deleteOnStart = false)
+    private static DbSettings BuildDbSettings(string dbName, bool deleteOnStart = false)
     {
         return new(GetTitleDbName(dbName), dbName)
         {
-            UpdateReadMetrics = updateReadsMetrics,
-            UpdateWriteMetrics = updateWriteMetrics,
             DeleteOnStart = deleteOnStart
         };
     }

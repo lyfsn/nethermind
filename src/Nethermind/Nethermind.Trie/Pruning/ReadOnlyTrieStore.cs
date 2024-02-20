@@ -54,9 +54,14 @@ namespace Nethermind.Trie.Pruning
         {
         }
 
-        public void PersistCache(IKeyValueStore kv, CancellationToken token)
+        public void PersistCache(CancellationToken token)
         {
-            _trieStore.PersistCache(kv, token);
+            _trieStore.PersistCache(token);
+        }
+
+        public bool HasRoot(Hash256 stateRoot)
+        {
+            return _trieStore.HasRoot(stateRoot);
         }
 
         public void Dispose() { }

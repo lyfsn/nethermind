@@ -30,5 +30,8 @@ namespace Nethermind.Db
         public IColumnsDb<BlobTxsColumns> BlobTransactionsDb { get; }
 
         T GetDb<T>(string dbName) where T : class, IDb;
+        IColumnsDb<T> GetColumnDb<T>(string dbName);
+
+        IEnumerable<KeyValuePair<string, IDbMeta>> GetAllDbMeta();
     }
 }

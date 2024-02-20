@@ -53,11 +53,21 @@ namespace Nethermind.Db
                     .CreateReadOnly(_createInMemoryWriteStore));
         }
 
+        public IColumnsDb<T> GetColumnDb<T>(string dbName)
+        {
+            // TODO: Remove getter
+            return _wrappedProvider.GetColumnDb<T>(dbName);
+        }
+
         public IColumnsDb<T> GetColumnDb<T>(string dbName, Func<IColumnsDb<T>> wrapperFetcher)
         {
             return (IColumnsDb<T>)_registeredColumnDbs
                 .GetOrAdd(dbName, (_) => wrapperFetcher()
                     .CreateReadOnly(_createInMemoryWriteStore));
+        }
+        public IEnumerable<KeyValuePair<string, IDbMeta>> GetAllDbMeta()
+        {
+            return _wrappedProvider.GetAllDbMeta();
         }
     }
 }
