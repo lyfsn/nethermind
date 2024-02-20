@@ -160,10 +160,10 @@ namespace Nethermind.TxPool
 
         public int GetPendingTransactionsCount() => _transactions.Count;
 
-        public IDictionary<Address, Transaction[]> GetPendingTransactionsBySender() =>
+        public IDictionary<AddressAsKey, Transaction[]> GetPendingTransactionsBySender() =>
             _transactions.GetBucketSnapshot();
 
-        public IDictionary<Address, Transaction[]> GetPendingLightBlobTransactionsBySender() =>
+        public IDictionary<AddressAsKey, Transaction[]> GetPendingLightBlobTransactionsBySender() =>
             _blobTransactions.GetBucketSnapshot();
 
         public Transaction[] GetPendingTransactionsBySender(Address address) =>
@@ -553,10 +553,7 @@ namespace Nethermind.TxPool
 
         private void UpdateBuckets()
         {
-            _transactions.VerifyCapacity();
             _transactions.UpdatePool(_accounts, _updateBucket);
-
-            _blobTransactions.VerifyCapacity();
             _blobTransactions.UpdatePool(_accounts, _updateBucket);
         }
 
@@ -732,7 +729,7 @@ namespace Nethermind.TxPool
         private static void AddNodeInfoEntryForTxPool()
         {
             ThisNodeInfo.AddInfo("Mem est tx   :",
-                $"{(LruCache<ValueHash256, object>.CalculateMemorySize(32, MemoryAllowance.TxHashCacheSize) + LruCache<Hash256, Transaction>.CalculateMemorySize(4096, MemoryAllowance.MemPoolSize)) / 1000 / 1000} MB"
+                $"{(LruCache<ValueHash256, object>.CalculateMemorySize(32, MemoryAllowance.TxHashCacheSize) + LruCache<Hash256AsKey, Transaction>.CalculateMemorySize(4096, MemoryAllowance.MemPoolSize)) / 1000 / 1000} MB"
                     .PadLeft(8));
         }
 
