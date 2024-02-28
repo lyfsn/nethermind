@@ -104,6 +104,13 @@ public class BlockHeaderBuilder : BuilderBase<BlockHeader>
         return this;
     }
 
+
+    public BlockHeaderBuilder WithInclusionListTransactionsRoot(Hash256 inclusionListTransactionsRoot)
+    {
+        TestObjectInternal.InclusionListTxRoot = inclusionListTransactionsRoot;
+        return this;
+    }
+
     public BlockHeaderBuilder WithReceiptsRoot(Hash256 receiptsRoot)
     {
         TestObjectInternal.ReceiptsRoot = receiptsRoot;

@@ -22,6 +22,7 @@ using Nethermind.Int256;
 using Nethermind.Logging;
 using Nethermind.Specs.Forks;
 using Nethermind.State;
+using Nethermind.State.Proofs;
 using Metrics = Nethermind.Blockchain.Metrics;
 
 namespace Nethermind.Consensus.Processing;
@@ -239,6 +240,9 @@ public partial class BlockProcessor : IBlockProcessor
         _stateProvider.Commit(spec);
 
         TxReceipt[] receipts = _blockTransactionsExecutor.ProcessTransactions(block, options, ReceiptsTracer, spec);
+
+        // calcuation of inclusion list tx hash
+        block.Header.InclusionListTxRoot = TxTrie.CalculateRoot(block.InclusionListTransactions);
 
         if (spec.IsEip4844Enabled)
         {

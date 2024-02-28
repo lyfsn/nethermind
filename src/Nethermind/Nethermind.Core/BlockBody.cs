@@ -7,24 +7,29 @@ namespace Nethermind.Core
 {
     public class BlockBody
     {
-        public BlockBody(Transaction[]? transactions, BlockHeader[]? uncles, Withdrawal[]? withdrawals = null)
+        public BlockBody(Transaction[]? transactions, Transaction[]? inclusionListTransactions , BlockHeader[]? uncles, Withdrawal[]? withdrawals = null)
         {
             Transactions = transactions ?? Array.Empty<Transaction>();
             Uncles = uncles ?? Array.Empty<BlockHeader>();
             Withdrawals = withdrawals;
+            InclusionListTransactions = inclusionListTransactions ?? Array.Empty<Transaction>();
         }
 
         public BlockBody() : this(null, null, null) { }
 
-        public BlockBody WithChangedTransactions(Transaction[] transactions) => new(transactions, Uncles, Withdrawals);
+        public BlockBody WithChangedTransactions(Transaction[] transactions) => new(transactions, null,  Uncles, Withdrawals);
 
-        public BlockBody WithChangedUncles(BlockHeader[] uncles) => new(Transactions, uncles, Withdrawals);
+        public BlockBody WithChangedInclusionListTransactions(Transaction[] inclusionListTransactions) => new(Transactions, inclusionListTransactions, Uncles, Withdrawals);
 
-        public BlockBody WithChangedWithdrawals(Withdrawal[]? withdrawals) => new(Transactions, Uncles, withdrawals);
+        public BlockBody WithChangedUncles(BlockHeader[] uncles) => new(Transactions, null,  uncles, Withdrawals);
+
+        public BlockBody WithChangedWithdrawals(Withdrawal[]? withdrawals) => new(Transactions, null, Uncles, withdrawals);
 
         public static BlockBody WithOneTransactionOnly(Transaction tx) => new(new[] { tx }, null, null);
 
         public Transaction[] Transactions { get; internal set; }
+
+        public Transaction[] InclusionListTransactions { get; internal set; }
 
         public BlockHeader[] Uncles { get; }
 

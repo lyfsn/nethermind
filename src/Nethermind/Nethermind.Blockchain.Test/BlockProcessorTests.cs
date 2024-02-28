@@ -27,6 +27,7 @@ using Nethermind.Consensus.Processing;
 using Nethermind.Consensus.Rewards;
 using Nethermind.Core.Test.Blockchain;
 using Nethermind.Evm.TransactionProcessing;
+using Nethermind.State.Proofs;
 
 namespace Nethermind.Blockchain.Test
 {
@@ -51,8 +52,10 @@ namespace Nethermind.Blockchain.Test
                 NullWitnessCollector.Instance,
                 LimboLogs.Instance);
 
-            BlockHeader header = Build.A.BlockHeader.WithAuthor(TestItem.AddressD).TestObject;
-            Block block = Build.A.Block.WithHeader(header).TestObject;
+            Transaction[] inclusionListTransactions = [Build.A.Transaction.TestObject];
+            Hash256 inclusionListTransactionsRoot = TxTrie.CalculateRoot(inclusionListTransactions);
+            BlockHeader header = Build.A.BlockHeader.WithAuthor(TestItem.AddressD).WithInclusionListTransactionsRoot(inclusionListTransactionsRoot).TestObject;
+            Block block = Build.A.Block.WithHeader(header).WithInclusionListTransactions(inclusionListTransactions).TestObject;
             Block[] processedBlocks = processor.Process(
                 Keccak.EmptyTreeHash,
                 new List<Block> { block },
@@ -60,6 +63,7 @@ namespace Nethermind.Blockchain.Test
                 NullBlockTracer.Instance);
             Assert.That(processedBlocks.Length, Is.EqualTo(1), "length");
             Assert.That(processedBlocks[0].Author, Is.EqualTo(block.Author), "author");
+            Assert.That(processedBlocks[0].Header.InclusionListTxRoot, Is.EqualTo(block.Header.InclusionListTxRoot), "inclusion list root");
         }
 
         [Test, Timeout(Timeout.MaxTestTime)]

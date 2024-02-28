@@ -51,6 +51,7 @@ public class BlockHeader
     public Address? GasBeneficiary => Author ?? Beneficiary;
     public Hash256? StateRoot { get; set; }
     public Hash256? TxRoot { get; set; }
+    public Hash256? InclusionListTxRoot { get; set; }
     public Hash256? ReceiptsRoot { get; set; }
     public Bloom? Bloom { get; set; }
     public UInt256 Difficulty { get; set; }

@@ -110,6 +110,15 @@ namespace Nethermind.Core.Test.Builders
             return this;
         }
 
+        public BlockBuilder WithInclusionListTransactions(params Transaction[] inclusionListTransactions)
+        {
+            TestObjectInternal = TestObjectInternal.WithReplacedBody(
+                TestObjectInternal.Body.WithChangedInclusionListTransactions(inclusionListTransactions));
+            
+            TestObjectInternal.Header.InclusionListTxRoot = TxTrie.CalculateRoot(inclusionListTransactions);
+            return this;
+        }
+
         public BlockBuilder WithTxRoot(Hash256 txRoot)
         {
             TestObjectInternal.Header.TxRoot = txRoot;
