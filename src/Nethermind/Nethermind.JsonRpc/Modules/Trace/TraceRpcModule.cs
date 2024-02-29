@@ -156,7 +156,7 @@ namespace Nethermind.JsonRpc.Modules.Trace
                 return ResultWrapper<ParityTxTraceFromReplay>.Fail(headerSearch);
             }
 
-            Block block = new(headerSearch.Object!, new[] { tx }, null,  Enumerable.Empty<BlockHeader>());
+            Block block = new(headerSearch.Object!, new[] { tx }, null, Enumerable.Empty<BlockHeader>());
 
             ParityTraceTypes traceTypes1 = GetParityTypes(traceTypes);
             IReadOnlyCollection<ParityLikeTxTrace> result = TraceBlock(block, new(traceTypes1));

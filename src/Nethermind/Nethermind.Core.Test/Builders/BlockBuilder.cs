@@ -114,7 +114,7 @@ namespace Nethermind.Core.Test.Builders
         {
             TestObjectInternal = TestObjectInternal.WithReplacedBody(
                 TestObjectInternal.Body.WithChangedInclusionListTransactions(inclusionListTransactions));
-            
+
             TestObjectInternal.Header.InclusionListTxRoot = TxTrie.CalculateRoot(inclusionListTransactions);
             return this;
         }

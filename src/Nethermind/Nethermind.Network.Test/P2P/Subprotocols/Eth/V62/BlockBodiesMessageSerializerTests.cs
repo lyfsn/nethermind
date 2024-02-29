@@ -56,14 +56,14 @@ public class BlockBodiesMessageSerializerTests
         yield return new BlockBody[] { null };
 
         // body with null withdrawals
-        yield return new BlockBody[] { new(new[] { tx }, Array.Empty<BlockHeader>(), null) };
+        yield return new BlockBody[] { new(new[] { tx }, [], Array.Empty<BlockHeader>(), null) };
 
         yield return new BlockBody[]
         {
             // body with empty withdrawals
-            new(new[] { tx }, new[] { header }, Array.Empty<Withdrawal>()),
+            new(new[] { tx }, [],  new[] { header }, Array.Empty<Withdrawal>()),
             // body with a single withdrawals
-            new(new[] { tx }, Array.Empty<BlockHeader>(),
+            new(new[] { tx }, [], Array.Empty<BlockHeader>(),
                 new[]
                 {
                     Build.A.Withdrawal
@@ -96,7 +96,7 @@ public class BlockBodiesMessageSerializerTests
                         .SignedAndResolved(new EthereumEcdsa(TestBlockchainIds.ChainId, LimboLogs.Instance),
                             TestItem.PrivateKeyA)
                         .TestObject,
-                }, new[] { header },
+                }, [], new[] { header },
                 new[]
                 {
                     Build.A.Withdrawal

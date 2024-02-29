@@ -232,7 +232,7 @@ namespace Nethermind.Serialization.Rlp
                 decoderContext.Check(blockCheck);
             }
 
-            return new(header, transactions, inclusionListTransactions , uncleHeaders, withdrawals);
+            return new(header, transactions, inclusionListTransactions, uncleHeaders, withdrawals);
         }
 
         public Rlp Encode(Block? item, RlpBehaviors rlpBehaviors = RlpBehaviors.None)

@@ -28,12 +28,12 @@ public class Block
         IEnumerable<Withdrawal>? withdrawals = null)
     {
         Header = header ?? throw new ArgumentNullException(nameof(header));
-        Body = new(transactions.ToArray(), inclusionListTransactions.ToArray() ,  uncles.ToArray(), withdrawals?.ToArray());
+        Body = new(transactions.ToArray(), inclusionListTransactions.ToArray(), uncles.ToArray(), withdrawals?.ToArray());
     }
 
     public Block(BlockHeader header) : this(
         header,
-        new(null, null,null,  header.WithdrawalsRoot is null ? null : Array.Empty<Withdrawal>())
+        new(null, null, null, header.WithdrawalsRoot is null ? null : Array.Empty<Withdrawal>())
     )
     { }
 
