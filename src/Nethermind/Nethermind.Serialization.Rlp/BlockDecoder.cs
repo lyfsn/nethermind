@@ -42,6 +42,16 @@ namespace Nethermind.Serialization.Rlp
 
             rlpStream.Check(transactionsCheck);
 
+            int inclusionListTransactionsSequenceLength = rlpStream.ReadSequenceLength();
+            int inclusionListTransactionsCheck = rlpStream.Position + inclusionListTransactionsSequenceLength;
+            List<Transaction> inclusionListTransactions = new();
+            while (rlpStream.Position < inclusionListTransactionsCheck)
+            {
+                inclusionListTransactions.Add(Rlp.Decode<Transaction>(rlpStream, rlpBehaviors));
+            }
+
+            rlpStream.Check(inclusionListTransactionsCheck);
+
             int unclesSequenceLength = rlpStream.ReadSequenceLength();
             int unclesCheck = rlpStream.Position + unclesSequenceLength;
             List<BlockHeader> uncleHeaders = new();
@@ -86,7 +96,7 @@ namespace Nethermind.Serialization.Rlp
                 rlpStream.Check(blockCheck);
             }
 
-            return new(header, transactions, uncleHeaders, withdrawals);
+            return new(header, transactions, inclusionListTransactions, uncleHeaders, withdrawals);
         }
 
         private (int Total, int Txs, int Uncles, int? Withdrawals) GetContentLength(Block item, RlpBehaviors rlpBehaviors)
@@ -181,6 +191,16 @@ namespace Nethermind.Serialization.Rlp
 
             decoderContext.Check(transactionsCheck);
 
+            int inclusionListTransactionsSequenceLength = decoderContext.ReadSequenceLength();
+            int inclusionListTransactionsCheck = decoderContext.Position + inclusionListTransactionsSequenceLength;
+            List<Transaction> inclusionListTransactions = new();
+            while (decoderContext.Position < inclusionListTransactionsCheck)
+            {
+                inclusionListTransactions.Add(Rlp.Decode<Transaction>(ref decoderContext, rlpBehaviors));
+            }
+
+            decoderContext.Check(inclusionListTransactionsCheck);
+
             int unclesSequenceLength = decoderContext.ReadSequenceLength();
             int unclesCheck = decoderContext.Position + unclesSequenceLength;
             List<BlockHeader> uncleHeaders = new();
@@ -212,7 +232,7 @@ namespace Nethermind.Serialization.Rlp
                 decoderContext.Check(blockCheck);
             }
 
-            return new(header, transactions, uncleHeaders, withdrawals);
+            return new(header, transactions, inclusionListTransactions , uncleHeaders, withdrawals);
         }
 
         public Rlp Encode(Block? item, RlpBehaviors rlpBehaviors = RlpBehaviors.None)
