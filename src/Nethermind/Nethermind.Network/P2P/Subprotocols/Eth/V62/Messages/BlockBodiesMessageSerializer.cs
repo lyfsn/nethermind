@@ -122,10 +122,10 @@ namespace Nethermind.Network.P2P.Subprotocols.Eth.V62.Messages
                 }
 
                 Transaction[] inclusionList = null;
-                // if (ctx.PeekNumberOfItemsRemaining(startingPosition + sequenceLength, 1) > 0)
-                // {
-                //     inclusionList = ctx.DecodeArray(_InclusionListDecoder);
-                // }
+                if (ctx.PeekNumberOfItemsRemaining(startingPosition + sequenceLength, 1) > 0)
+                {
+                    inclusionList = ctx.DecodeArray(_InclusionListDecoder);
+                }
 
                 return new BlockBody(transactions, uncles, withdrawals, inclusionList);
             }
