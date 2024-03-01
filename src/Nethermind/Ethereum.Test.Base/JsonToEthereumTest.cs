@@ -117,8 +117,7 @@ namespace Ethereum.Test.Base
                                    ?? Array.Empty<BlockHeader>();
             Transaction[] transactions = testBlockJson.Transactions?.Select(Convert).ToArray()
                                          ?? Array.Empty<Transaction>();
-            Transaction[] inclusionList = Array.Empty<Transaction>();
-            Block block = new(header, transactions, uncles, inclusionList);
+            Block block = new(header, transactions, uncles);
             return block;
         }
 
