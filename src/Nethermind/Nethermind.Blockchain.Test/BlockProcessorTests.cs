@@ -52,10 +52,10 @@ namespace Nethermind.Blockchain.Test
                 NullWitnessCollector.Instance,
                 LimboLogs.Instance);
 
-            Transaction[] inclusionListTransactions = [Build.A.Transaction.TestObject];
-            Hash256 inclusionListTransactionsRoot = TxTrie.CalculateRoot(inclusionListTransactions);
-            BlockHeader header = Build.A.BlockHeader.WithAuthor(TestItem.AddressD).WithInclusionListTransactionsRoot(inclusionListTransactionsRoot).TestObject;
-            Block block = Build.A.Block.WithHeader(header).WithInclusionListTransactions(inclusionListTransactions).TestObject;
+            Transaction[] inclusionList = [Build.A.Transaction.TestObject];
+            Hash256 inclusionListRoot = TxTrie.CalculateRoot(inclusionList);
+            BlockHeader header = Build.A.BlockHeader.WithAuthor(TestItem.AddressD).WithInclusionListRoot(inclusionListRoot).TestObject;
+            Block block = Build.A.Block.WithHeader(header).WithInclusionList(inclusionList).TestObject;
             Block[] processedBlocks = processor.Process(
                 Keccak.EmptyTreeHash,
                 new List<Block> { block },

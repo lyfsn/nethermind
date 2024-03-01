@@ -242,7 +242,7 @@ public partial class BlockProcessor : IBlockProcessor
         TxReceipt[] receipts = _blockTransactionsExecutor.ProcessTransactions(block, options, ReceiptsTracer, spec);
 
         // calcuation of inclusion list tx hash
-        block.Header.InclusionListTxRoot = TxTrie.CalculateRoot(block.InclusionListTransactions);
+        block.Header.InclusionListTxRoot = TxTrie.CalculateRoot(block.InclusionList);
 
         if (spec.IsEip4844Enabled)
         {

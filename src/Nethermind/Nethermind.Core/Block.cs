@@ -23,12 +23,12 @@ public class Block
     public Block(
         BlockHeader header,
         IEnumerable<Transaction> transactions,
-        IEnumerable<Transaction> inclusionListTransactions,
+        IEnumerable<Transaction> inclusionList,
         IEnumerable<BlockHeader> uncles,
         IEnumerable<Withdrawal>? withdrawals = null)
     {
         Header = header ?? throw new ArgumentNullException(nameof(header));
-        Body = new(transactions.ToArray(), inclusionListTransactions.ToArray(), uncles.ToArray(), withdrawals?.ToArray());
+        Body = new(transactions.ToArray(), inclusionList.ToArray(), uncles.ToArray(), withdrawals?.ToArray());
     }
 
     public Block(BlockHeader header) : this(
@@ -55,7 +55,7 @@ public class Block
         protected set => Body.Transactions = value; // needed to produce blocks with unknown transaction count on start
     }
 
-    public Transaction[] InclusionListTransactions => Body.InclusionListTransactions; // do not add setter here
+    public Transaction[] InclusionList => Body.InclusionList; // do not add setter here
 
     public BlockHeader[] Uncles => Body.Uncles; // do not add setter here
 
