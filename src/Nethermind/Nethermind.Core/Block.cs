@@ -25,7 +25,7 @@ public class Block
         IEnumerable<Transaction> transactions,
         IEnumerable<BlockHeader> uncles,
         IEnumerable<Withdrawal>? withdrawals = null,
-        IEnumerable<Transaction>? inclusionList= null)
+        IEnumerable<Transaction>? inclusionList = null)
     {
         Header = header ?? throw new ArgumentNullException(nameof(header));
         Body = new(transactions.ToArray(), uncles.ToArray(), withdrawals?.ToArray(), inclusionList?.ToArray());
@@ -59,7 +59,8 @@ public class Block
 
     public Withdrawal[]? Withdrawals => Body.Withdrawals;
 
-    public Transaction[]? InclusionList {
+    public Transaction[]? InclusionList
+    {
         get => Body.InclusionList;
         protected set => Body.InclusionList = value; // needed to produce blocks
     }

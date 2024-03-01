@@ -82,7 +82,7 @@ namespace Nethermind.Serialization.Rlp
             }
 
             List<Transaction> inclusionList = null;
-             if (rlpStream.Position != blockCheck)
+            if (rlpStream.Position != blockCheck)
             {
                 bool lengthWasRead = true;
                 try

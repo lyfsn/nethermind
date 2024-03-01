@@ -59,7 +59,7 @@ namespace Nethermind.Mev.Execution
             header.BaseFeePerGas = BaseFeeCalculator.Calculate(parent, _specProvider.GetSpec(header));
             header.Hash = header.CalculateHash();
 
-            return new Block(header, bundle.Transactions,  Array.Empty<BlockHeader>());
+            return new Block(header, bundle.Transactions, Array.Empty<BlockHeader>());
         }
 
         protected virtual long GetGasLimit(BlockHeader parent) => parent.GasLimit;
