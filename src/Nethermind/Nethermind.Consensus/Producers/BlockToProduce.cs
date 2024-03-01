@@ -53,7 +53,6 @@ namespace Nethermind.Consensus.Producers
         {
             Transactions = transactions;
             InclusionList = inclusionList;
-
         }
     }
 }

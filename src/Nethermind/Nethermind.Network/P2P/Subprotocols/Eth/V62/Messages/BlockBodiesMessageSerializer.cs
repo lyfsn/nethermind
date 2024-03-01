@@ -59,6 +59,8 @@ namespace Nethermind.Network.P2P.Subprotocols.Eth.V62.Messages
             private readonly HeaderDecoder _headerDecoder = new();
             private readonly WithdrawalDecoder _withdrawalDecoderDecoder = new();
 
+            private readonly TxDecoder _InclusionListDecoder = new();
+
             public int GetLength(BlockBody item, RlpBehaviors rlpBehaviors)
             {
                 return Rlp.LengthOfSequence(GetBodyLength(item));
@@ -68,6 +70,11 @@ namespace Nethermind.Network.P2P.Subprotocols.Eth.V62.Messages
             {
                 if (b.Withdrawals is not null)
                 {
+                    if(b.InclusionList is not null)
+                    {
+                        return Rlp.LengthOfSequence(GetTxLength(b.Transactions)) +
+                               Rlp.LengthOfSequence(GetUnclesLength(b.Uncles)) + Rlp.LengthOfSequence(GetWithdrawalsLength(b.Withdrawals)) + Rlp.LengthOfSequence(GetInclusionListLength(b.InclusionList));
+                    }
                     return Rlp.LengthOfSequence(GetTxLength(b.Transactions)) +
                            Rlp.LengthOfSequence(GetUnclesLength(b.Uncles)) + Rlp.LengthOfSequence(GetWithdrawalsLength(b.Withdrawals));
                 }
@@ -88,6 +95,11 @@ namespace Nethermind.Network.P2P.Subprotocols.Eth.V62.Messages
             private int GetWithdrawalsLength(Withdrawal[] withdrawals)
             {
                 return withdrawals.Sum(t => _withdrawalDecoderDecoder.GetLength(t, RlpBehaviors.None));
+            }
+
+            private int GetInclusionListLength(Transaction[] inclusionList)
+            {
+                return inclusionList.Sum(t => _InclusionListDecoder.GetLength(t, RlpBehaviors.None));
             }
 
             public BlockBody? Decode(ref Rlp.ValueDecoderContext ctx, RlpBehaviors rlpBehaviors = RlpBehaviors.None)
@@ -112,7 +124,7 @@ namespace Nethermind.Network.P2P.Subprotocols.Eth.V62.Messages
                 Transaction[] inclusionList = null;
                 if (ctx.PeekNumberOfItemsRemaining(startingPosition + sequenceLength, 1) > 0)
                 {
-                    inclusionList = ctx.DecodeArray(_txDecoder);
+                    inclusionList = ctx.DecodeArray(_InclusionListDecoder);
                 }
 
                 return new BlockBody(transactions, uncles, withdrawals, inclusionList);
@@ -139,6 +151,15 @@ namespace Nethermind.Network.P2P.Subprotocols.Eth.V62.Messages
                     foreach (Withdrawal? withdrawal in body.Withdrawals)
                     {
                         stream.Encode(withdrawal);
+                    }
+                }
+
+                if(body.InclusionList is not null)
+                {
+                    stream.StartSequence(GetInclusionListLength(body.InclusionList));
+                    foreach (Transaction? txn in body.InclusionList)
+                    {
+                        stream.Encode(txn);
                     }
                 }
             }
