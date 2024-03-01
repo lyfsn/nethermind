@@ -201,7 +201,6 @@ namespace Nethermind.Serialization.Rlp
             rlpStream.Encode(header.Beneficiary);
             rlpStream.Encode(header.StateRoot);
             rlpStream.Encode(header.TxRoot);
-            rlpStream.Encode(header.InclusionListTxRoot);
             rlpStream.Encode(header.ReceiptsRoot);
             rlpStream.Encode(header.Bloom);
             rlpStream.Encode(header.Difficulty);
@@ -245,6 +244,10 @@ namespace Nethermind.Serialization.Rlp
             if (header.ParentBeaconBlockRoot is not null)
             {
                 rlpStream.Encode(header.ParentBeaconBlockRoot);
+            }
+            if(header.InclusionListTxRoot is not null)
+            {
+                rlpStream.Encode(header.InclusionListTxRoot);
             }
         }
 

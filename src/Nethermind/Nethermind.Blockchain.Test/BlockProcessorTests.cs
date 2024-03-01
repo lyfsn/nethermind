@@ -52,10 +52,8 @@ namespace Nethermind.Blockchain.Test
                 NullWitnessCollector.Instance,
                 LimboLogs.Instance);
 
-            Transaction[] inclusionList = [Build.A.Transaction.TestObject];
-            Hash256 inclusionListRoot = TxTrie.CalculateRoot(inclusionList);
-            BlockHeader header = Build.A.BlockHeader.WithAuthor(TestItem.AddressD).WithInclusionListRoot(inclusionListRoot).TestObject;
-            Block block = Build.A.Block.WithHeader(header).WithInclusionList(inclusionList).TestObject;
+            BlockHeader header = Build.A.BlockHeader.WithAuthor(TestItem.AddressD).TestObject;
+            Block block = Build.A.Block.WithHeader(header).TestObject;
             Block[] processedBlocks = processor.Process(
                 Keccak.EmptyTreeHash,
                 new List<Block> { block },
@@ -63,7 +61,6 @@ namespace Nethermind.Blockchain.Test
                 NullBlockTracer.Instance);
             Assert.That(processedBlocks.Length, Is.EqualTo(1), "length");
             Assert.That(processedBlocks[0].Author, Is.EqualTo(block.Author), "author");
-            Assert.That(processedBlocks[0].Header.InclusionListTxRoot, Is.EqualTo(block.Header.InclusionListTxRoot), "inclusion list root");
         }
 
         [Test, Timeout(Timeout.MaxTestTime)]
@@ -160,6 +157,36 @@ namespace Nethermind.Blockchain.Test
             ((BlockTree)testRpc.BlockTree).AddBranch(branchLength, (int)testRpc.BlockTree.BestKnownNumber);
             (await suggestedBlockResetEvent.WaitAsync(TestBlockchain.DefaultTimeout * 10)).Should().BeTrue();
             Assert.That((int)testRpc.BlockTree.BestKnownNumber, Is.EqualTo(branchLength - 1));
+        }
+
+        [Test, Timeout(Timeout.MaxTestTime)]
+        public void Prepared_block_has_valid_inclusionListRoot()
+        {
+            IDb stateDb = new MemDb();
+            IDb codeDb = new MemDb();
+            TrieStore trieStore = new(stateDb, LimboLogs.Instance);
+            IWorldState stateProvider = new WorldState(trieStore, codeDb, LimboLogs.Instance);
+            ITransactionProcessor transactionProcessor = Substitute.For<ITransactionProcessor>();
+            BlockProcessor processor = new(
+                GoerliSpecProvider.Instance,
+                TestBlockValidator.AlwaysValid,
+                NoBlockRewards.Instance,
+                new BlockProcessor.BlockValidationTransactionsExecutor(transactionProcessor, stateProvider),
+                stateProvider,
+                NullReceiptStorage.Instance,
+                NullWitnessCollector.Instance,
+                LimboLogs.Instance);
+
+            Transaction[] inclusionList = [Build.A.Transaction.TestObject];
+            Hash256 inclusionListRoot = TxTrie.CalculateRoot(inclusionList);
+            BlockHeader header = Build.A.BlockHeader.WithInclusionListRoot(inclusionListRoot).TestObject;
+            Block block = Build.A.Block.WithHeader(header).WithInclusionList(inclusionList).TestObject;
+            Block[] processedBlocks = processor.Process(
+                Keccak.EmptyTreeHash,
+                new List<Block> { block },
+                ProcessingOptions.None,
+                NullBlockTracer.Instance);
+            Assert.That(processedBlocks[0].Header.InclusionListTxRoot, Is.EqualTo(block.Header.InclusionListTxRoot), "Processed block should have valid inclusion list root");
         }
     }
 }

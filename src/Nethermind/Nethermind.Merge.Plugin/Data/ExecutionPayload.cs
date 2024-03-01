@@ -149,7 +149,7 @@ public class ExecutionPayload : IForkValidator, IExecutionPayloadParams
                 WithdrawalsRoot = Withdrawals is null ? null : new WithdrawalTrie(Withdrawals).RootHash,
             };
 
-            block = new(header, transactions, Array.Empty<Transaction>(), Array.Empty<BlockHeader>(), Withdrawals);
+            block = new(header, transactions, Array.Empty<BlockHeader>(), Withdrawals, Array.Empty<Transaction>());
 
             return true;
         }

@@ -7,7 +7,7 @@ namespace Nethermind.Core
 {
     public class BlockBody
     {
-        public BlockBody(Transaction[]? transactions, Transaction[]? inclusionList, BlockHeader[]? uncles, Withdrawal[]? withdrawals = null)
+        public BlockBody(Transaction[]? transactions, BlockHeader[]? uncles, Withdrawal[]? withdrawals = null, Transaction[]? inclusionList = null)
         {
             Transactions = transactions ?? Array.Empty<Transaction>();
             Uncles = uncles ?? Array.Empty<BlockHeader>();
@@ -17,19 +17,19 @@ namespace Nethermind.Core
 
         public BlockBody() : this(null, null, null) { }
 
-        public BlockBody WithChangedTransactions(Transaction[] transactions) => new(transactions, null, Uncles, Withdrawals);
+        public BlockBody WithChangedTransactions(Transaction[] transactions) => new(transactions, Uncles, Withdrawals, null);
 
-        public BlockBody WithChangedInclusionList(Transaction[] inclusionList) => new(Transactions, inclusionList, Uncles, Withdrawals);
+        public BlockBody WithChangedInclusionList(Transaction[] inclusionList) => new(Transactions, Uncles, Withdrawals, inclusionList);
 
-        public BlockBody WithChangedUncles(BlockHeader[] uncles) => new(Transactions, null, uncles, Withdrawals);
+        public BlockBody WithChangedUncles(BlockHeader[] uncles) => new(Transactions, uncles, Withdrawals, null);
 
-        public BlockBody WithChangedWithdrawals(Withdrawal[]? withdrawals) => new(Transactions, null, Uncles, withdrawals);
+        public BlockBody WithChangedWithdrawals(Withdrawal[]? withdrawals) => new(Transactions, Uncles, withdrawals, null);
 
-        public static BlockBody WithOneTransactionOnly(Transaction tx) => new(new[] { tx }, null, null);
+        public static BlockBody WithOneTransactionOnly(Transaction tx) => new(new[] { tx }, null, null, null);
 
         public Transaction[] Transactions { get; internal set; }
 
-        public Transaction[] InclusionList { get; internal set; }
+        public Transaction[]? InclusionList { get; internal set; }
 
         public BlockHeader[] Uncles { get; }
 

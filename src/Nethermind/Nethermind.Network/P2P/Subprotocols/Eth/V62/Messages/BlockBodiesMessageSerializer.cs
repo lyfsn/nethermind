@@ -102,7 +102,6 @@ namespace Nethermind.Network.P2P.Subprotocols.Eth.V62.Messages
                 // quite significant allocations (>0.5%) here based on a sample 3M blocks sync
                 // (just on these delegates)
                 Transaction[] transactions = ctx.DecodeArray(_txDecoder);
-                Transaction[] inclusionList = ctx.DecodeArray(_txDecoder);
                 BlockHeader[] uncles = ctx.DecodeArray(_headerDecoder);
                 Withdrawal[]? withdrawals = null;
                 if (ctx.PeekNumberOfItemsRemaining(startingPosition + sequenceLength, 1) > 0)
@@ -110,7 +109,13 @@ namespace Nethermind.Network.P2P.Subprotocols.Eth.V62.Messages
                     withdrawals = ctx.DecodeArray(_withdrawalDecoderDecoder);
                 }
 
-                return new BlockBody(transactions, inclusionList, uncles, withdrawals);
+                Transaction[] inclusionList = null;
+                if (ctx.PeekNumberOfItemsRemaining(startingPosition + sequenceLength, 1) > 0)
+                {
+                    inclusionList = ctx.DecodeArray(_txDecoder);
+                }
+
+                return new BlockBody(transactions, uncles, withdrawals, inclusionList);
             }
 
             public void Serialize(RlpStream stream, BlockBody body)

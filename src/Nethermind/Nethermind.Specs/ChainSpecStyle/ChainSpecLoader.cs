@@ -427,7 +427,7 @@ public class ChainSpecLoader(IJsonSerializer serializer) : IChainSpecLoader
         genesisHeader.AuRaSignature = auRaSignature;
 
         if (withdrawalsEnabled)
-            chainSpec.Genesis = new Block(genesisHeader, Array.Empty<Transaction>(), Array.Empty<Transaction>(), Array.Empty<BlockHeader>(), Array.Empty<Withdrawal>());
+            chainSpec.Genesis = new Block(genesisHeader, Array.Empty<Transaction>(), Array.Empty<BlockHeader>(), Array.Empty<Withdrawal>(), Array.Empty<Transaction>());
         else
             chainSpec.Genesis = new Block(genesisHeader);
     }
