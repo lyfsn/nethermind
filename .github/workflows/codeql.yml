@@ -33,7 +33,7 @@ jobs:
         working-directory: src/Nethermind
         run: |
           dotnet build Nethermind.sln -c release
-          find artifacts/bin -type d -name "runtimes" -delete
+          rm -rf artifacts/bin/**/runtimes/**
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v3
         with:
