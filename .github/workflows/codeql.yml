@@ -31,7 +31,9 @@ jobs:
         uses: actions/setup-dotnet@v4
       - name: Build Nethermind
         working-directory: src/Nethermind
-        run: dotnet build Nethermind.sln -c release
+        run: |
+          dotnet build Nethermind.sln -c release
+          find artifacts/bin -type d -name "runtimes" -delete
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v3
         with:
