@@ -35,6 +35,6 @@ namespace Nethermind.Core
 
         public Withdrawal[]? Withdrawals { get; }
 
-        public bool IsEmpty => Transactions.Length == 0 && Uncles.Length == 0 && (Withdrawals?.Length ?? 0) == 0;
+        public bool IsEmpty => Transactions.Length == 0 && Uncles.Length == 0 && (Withdrawals?.Length ?? 0) == 0 && (InclusionList?.Length ?? 0) == 0;
     }
 }

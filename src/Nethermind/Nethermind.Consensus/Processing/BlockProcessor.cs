@@ -241,11 +241,8 @@ public partial class BlockProcessor : IBlockProcessor
 
         TxReceipt[] receipts = _blockTransactionsExecutor.ProcessTransactions(block, options, ReceiptsTracer, spec);
 
-        // print the inclusion list tx hash
-        _logger.Trace($"Inclusion list tx hash: {block.Header.InclusionListTxRoot}");
-
         // calcuation of inclusion list tx hash
-        if (block.Header.InclusionListTxRoot is not null)
+        if (block.InclusionList is not null)
         {
             block.Header.InclusionListTxRoot = TxTrie.CalculateRoot(block.InclusionList);
         }
