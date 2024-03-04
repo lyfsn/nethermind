@@ -68,7 +68,7 @@ namespace Nethermind.Network.P2P.Subprotocols.Eth.V62.Messages
             {
                 if (b.Withdrawals is not null)
                 {
-                    if(b.InclusionList is not null)
+                    if (b.InclusionList is not null)
                     {
                         return Rlp.LengthOfSequence(GetTxLength(b.Transactions)) +
                                Rlp.LengthOfSequence(GetUnclesLength(b.Uncles)) + Rlp.LengthOfSequence(GetWithdrawalsLength(b.Withdrawals)) + Rlp.LengthOfSequence(GetInclusionListLength(b.InclusionList));
@@ -152,7 +152,7 @@ namespace Nethermind.Network.P2P.Subprotocols.Eth.V62.Messages
                     }
                 }
 
-                if(body.InclusionList is not null)
+                if (body.InclusionList is not null)
                 {
                     stream.StartSequence(GetInclusionListLength(body.InclusionList));
                     foreach (Transaction? txn in body.InclusionList)
