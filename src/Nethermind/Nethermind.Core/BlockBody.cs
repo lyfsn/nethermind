@@ -12,7 +12,7 @@ namespace Nethermind.Core
             Transactions = transactions ?? Array.Empty<Transaction>();
             Uncles = uncles ?? Array.Empty<BlockHeader>();
             Withdrawals = withdrawals;
-            InclusionList = inclusionList ?? Array.Empty<Transaction>();
+            InclusionList = inclusionList;
         }
 
         public BlockBody() : this(null, null, null) { }
