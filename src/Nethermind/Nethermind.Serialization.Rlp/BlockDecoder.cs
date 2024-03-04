@@ -14,8 +14,6 @@ namespace Nethermind.Serialization.Rlp
         private readonly TxDecoder _txDecoder = new();
         private readonly WithdrawalDecoder _withdrawalDecoder = new();
 
-        private readonly TxDecoder _includeTxDecoder = new();
-
         public Block? Decode(RlpStream rlpStream, RlpBehaviors rlpBehaviors = RlpBehaviors.None)
         {
             if (rlpStream.Length == 0)

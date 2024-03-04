@@ -59,8 +59,6 @@ namespace Nethermind.Network.P2P.Subprotocols.Eth.V62.Messages
             private readonly HeaderDecoder _headerDecoder = new();
             private readonly WithdrawalDecoder _withdrawalDecoderDecoder = new();
 
-            private readonly TxDecoder _InclusionListDecoder = new();
-
             public int GetLength(BlockBody item, RlpBehaviors rlpBehaviors)
             {
                 return Rlp.LengthOfSequence(GetBodyLength(item));
@@ -99,7 +97,7 @@ namespace Nethermind.Network.P2P.Subprotocols.Eth.V62.Messages
 
             private int GetInclusionListLength(Transaction[] inclusionList)
             {
-                return inclusionList.Sum(t => _InclusionListDecoder.GetLength(t, RlpBehaviors.None));
+                return inclusionList.Sum(t => _txDecoder.GetLength(t, RlpBehaviors.None));
             }
 
             public BlockBody? Decode(ref Rlp.ValueDecoderContext ctx, RlpBehaviors rlpBehaviors = RlpBehaviors.None)
@@ -121,10 +119,10 @@ namespace Nethermind.Network.P2P.Subprotocols.Eth.V62.Messages
                     withdrawals = ctx.DecodeArray(_withdrawalDecoderDecoder);
                 }
 
-                Transaction[] inclusionList = null;
+                Transaction[]? inclusionList = null;
                 if (ctx.PeekNumberOfItemsRemaining(startingPosition + sequenceLength, 1) > 0)
                 {
-                    inclusionList = ctx.DecodeArray(_InclusionListDecoder);
+                    inclusionList = ctx.DecodeArray(_txDecoder);
                 }
 
                 return new BlockBody(transactions, uncles, withdrawals, inclusionList);
