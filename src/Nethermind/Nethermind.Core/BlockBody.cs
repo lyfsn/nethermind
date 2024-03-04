@@ -19,7 +19,7 @@ namespace Nethermind.Core
 
         public BlockBody WithChangedTransactions(Transaction[] transactions) => new(transactions, Uncles, Withdrawals, null);
 
-        public BlockBody WithChangedInclusionList(Transaction[] inclusionList) => new(Transactions, Uncles, Withdrawals, inclusionList);
+        public BlockBody WithChangedInclusionList(Transaction[]? inclusionList) => new(Transactions, Uncles, Withdrawals, inclusionList);
 
         public BlockBody WithChangedUncles(BlockHeader[] uncles) => new(Transactions, uncles, Withdrawals, null);
 

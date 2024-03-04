@@ -71,7 +71,7 @@ public class BlockBodiesMessageSerializerTests
                         .WithAmount(1)
                         .WithRecipient(TestItem.AddressA)
                         .TestObject
-                }, Array.Empty<Transaction>()),
+                }),
             // body with multiple withdrawals
             new(new[]
                 {

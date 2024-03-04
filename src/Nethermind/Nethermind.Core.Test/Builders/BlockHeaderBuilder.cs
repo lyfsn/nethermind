@@ -105,7 +105,7 @@ public class BlockHeaderBuilder : BuilderBase<BlockHeader>
     }
 
 
-    public BlockHeaderBuilder WithInclusionListRoot(Hash256 inclusionListRoot)
+    public BlockHeaderBuilder WithInclusionListRoot(Hash256? inclusionListRoot)
     {
         TestObjectInternal.InclusionListTxRoot = inclusionListRoot;
         return this;
