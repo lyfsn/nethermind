@@ -116,7 +116,7 @@ namespace Nethermind.Core.Test.Builders
                 TestObjectInternal.Body.WithChangedInclusionList(inclusionList));
 
             if (inclusionList is not null)
-            { 
+            {
                 TestObjectInternal.Header.InclusionListTxRoot = TxTrie.CalculateRoot(inclusionList);
             }
             return this;
