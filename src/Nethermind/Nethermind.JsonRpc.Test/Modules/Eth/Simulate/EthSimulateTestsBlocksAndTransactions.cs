@@ -136,9 +136,13 @@ public class EthSimulateTestsBlocksAndTransactions
         };
 
         //Test that transfer tx works on mainchain
-        UInt256 before = chain.State.GetAccount(TestItem.AddressA).Balance;
+        Assert.True(chain.State.TryGetAccount(TestItem.AddressA, out AccountStruct testBefore));
+
+        UInt256 before = testBefore.Balance;
         await chain.AddBlock(true, txMainnetAtoB);
-        UInt256 after = chain.State.GetAccount(TestItem.AddressA).Balance;
+        Assert.True(chain.State.TryGetAccount(TestItem.AddressA, out AccountStruct testAfter));
+
+        UInt256 after = testAfter.Balance;
         Assert.Less(after, before);
 
         chain.Bridge.GetReceipt(txMainnetAtoB.Hash!);
@@ -216,9 +220,13 @@ public class EthSimulateTestsBlocksAndTransactions
         };
 
         //Test that transfer tx works on mainchain
-        UInt256 before = chain.State.GetAccount(TestItem.AddressA).Balance;
+        Assert.True(chain.State.TryGetAccount(TestItem.AddressA, out AccountStruct testBefore));
+
+        UInt256 before = testBefore.Balance;
         await chain.AddBlock(true, txMainnetAtoB);
-        UInt256 after = chain.State.GetAccount(TestItem.AddressA).Balance;
+        Assert.True(chain.State.TryGetAccount(TestItem.AddressA, out AccountStruct testAfter));
+
+        UInt256 after = testAfter.Balance;
         Assert.Less(after, before);
 
         chain.Bridge.GetReceipt(txMainnetAtoB.Hash!);

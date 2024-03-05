@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Transactions;
 using Nethermind.Core;
 using Nethermind.Core.Crypto;
 using Nethermind.Core.Extensions;
@@ -50,14 +51,8 @@ public static class StateOverridesExtensions
 
     private static bool TryGetAccount(this IWorldState stateProvider, Address address, out AccountStruct account)
     {
-        try
-        {
-            account = stateProvider.GetAccount(address);
-        }
-        catch (TrieException)
-        {
-            account = new AccountStruct();
-        }
+        //TODO: may be wrapp in try-catrch
+        account = stateProvider.TryGetAccount(address, out AccountStruct test) ? test : new AccountStruct();
 
         return !account.IsTotallyEmpty;
     }

@@ -96,7 +96,7 @@ namespace Nethermind.Blockchain
 
         public Hash256 FindHash(long blockNumber) => wrapped.FindHash(blockNumber);
 
-        public IOwnedReadOnlyList<BlockHeader> FindHeaders(Hash256 hash, int numberOfBlocks, int skip, bool reverse) => _wrapped.FindHeaders(hash, numberOfBlocks, skip, reverse);
+        public IOwnedReadOnlyList<BlockHeader> FindHeaders(Hash256 hash, int numberOfBlocks, int skip, bool reverse) => wrapped.FindHeaders(hash, numberOfBlocks, skip, reverse);
 
         public BlockHeader FindLowestCommonAncestor(BlockHeader firstDescendant, BlockHeader secondDescendant, long maxSearchDepth) => wrapped.FindLowestCommonAncestor(firstDescendant, secondDescendant, maxSearchDepth);
 
