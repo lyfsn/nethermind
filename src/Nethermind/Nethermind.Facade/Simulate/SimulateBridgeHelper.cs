@@ -184,7 +184,7 @@ public class SimulateBridgeHelper(
                 }
 
                 nonceCache[transaction.SenderAddress] = cachedNonce;
-                
+
             }
             else
             {
