@@ -120,7 +120,7 @@ public class SimulateBridgeHelper(
                 IEnumerable<Transaction> transactions = callInputBlock.Calls?.Select(t => CreateTransaction(t, callHeader, env, nonceCache, payload.Validation))
                                                         ?? Array.Empty<Transaction>();
                 nonceCache = new(); // clear up catch as next block would have correct numbers for base nonce values
-                
+
                 Block currentBlock = new Block(callHeader, transactions, Array.Empty<BlockHeader>());
                 currentBlock.Header.Hash = currentBlock.Header.CalculateHash();
 
