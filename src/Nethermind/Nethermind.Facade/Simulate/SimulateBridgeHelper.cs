@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nethermind.Blockchain;
 using Nethermind.Config;
 using Nethermind.Consensus.Processing;
 using Nethermind.Core;
@@ -11,7 +12,6 @@ using Nethermind.Core.Collections;
 using Nethermind.Core.Crypto;
 using Nethermind.Core.Specs;
 using Nethermind.Crypto;
-using Nethermind.Evm;
 using Nethermind.Evm.Tracing;
 using Nethermind.Evm.TransactionProcessing;
 using Nethermind.Facade.Proxy.Models.Simulate;
@@ -119,7 +119,8 @@ public class SimulateBridgeHelper(
 
                 IEnumerable<Transaction> transactions = callInputBlock.Calls?.Select(t => CreateTransaction(t, callHeader, env, nonceCache, payload.Validation))
                                                         ?? Array.Empty<Transaction>();
-
+                nonceCache = new(); // clear up catch as next block would have correct numbers for base nonce values
+                
                 Block currentBlock = new Block(callHeader, transactions, Array.Empty<BlockHeader>());
                 currentBlock.Header.Hash = currentBlock.Header.CalculateHash();
 
@@ -149,8 +150,8 @@ public class SimulateBridgeHelper(
                 parent = processedBlock.Header;
                 if (processedBlock is not null)
                 {
-                    //env.BlockTree.UpdateMainChain(new[] { currentBlock }, true, true);
-                    env.BlockTree.UpdateHeadBlock(currentBlock.Hash!);
+                    env.BlockTree.SuggestBlock(processedBlock, BlockTreeSuggestOptions.ForceSetAsMain);
+                    env.BlockTree.UpdateHeadBlock(processedBlock.Hash!);
                 }
             }
         }
