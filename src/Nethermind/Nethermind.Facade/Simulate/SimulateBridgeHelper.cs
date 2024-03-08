@@ -110,7 +110,7 @@ public class SimulateBridgeHelper(
                     specifiedGasTxs.Sum(details => details.Transaction.GasLimit);
                 if (notSpecifiedGasTxs.Any())
                 {
-                    var gasPerTx = callHeader.GasLimit - gasSpecified / notSpecifiedGasTxs.Count;
+                    var gasPerTx = (callHeader.GasLimit - gasSpecified) / notSpecifiedGasTxs.Count;
                     foreach (TransactionWithSourceDetails? call in notSpecifiedGasTxs)
                     {
                         call.Transaction.GasLimit = gasPerTx;
@@ -136,15 +136,15 @@ public class SimulateBridgeHelper(
 
                 stateProvider.RecalculateStateRoot();
                 Block[] currentBlocks;
-                //try
+                try
                 {
                     IBlockProcessor processor = env.GetProcessor(currentBlock.StateRoot!);
                     currentBlocks = processor.Process(stateProvider.StateRoot, suggestedBlocks, processingFlags, tracer);
                 }
-                //catch (Exception)
-                //{
-                //    return (false, $"invalid on block {callHeader.Number}");
-                //}
+                catch (Exception e)
+                {
+                    return (false, $"invalid on block {callHeader.Number}, {e}");
+                }
 
                 Block processedBlock = currentBlocks[0];
                 parent = processedBlock.Header;
