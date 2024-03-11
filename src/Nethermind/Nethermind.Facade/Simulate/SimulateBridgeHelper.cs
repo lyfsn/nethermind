@@ -117,12 +117,33 @@ public class SimulateBridgeHelper(
                     }
                 }
 
-                IEnumerable<Transaction> transactions = callInputBlock.Calls?.Select(t => CreateTransaction(t, callHeader, env, nonceCache, payload.Validation))
+                Transaction[] transactions = callInputBlock.Calls?.Select(t => CreateTransaction(t, callHeader, env, nonceCache, payload.Validation)).ToArray()
                                                         ?? Array.Empty<Transaction>();
+                
                 nonceCache = new(); // clear up catch as next block would have correct numbers for base nonce values
 
-                Block currentBlock = new Block(callHeader, transactions, Array.Empty<BlockHeader>());
+                Block currentBlock = new Block(callHeader, Array.Empty<Transaction>(), Array.Empty<BlockHeader>());
                 currentBlock.Header.Hash = currentBlock.Header.CalculateHash();
+
+
+                var testedTxs = new HashSet<Transaction>();
+                for (var index = 0; index < transactions.Length; index++)
+                {
+                    Transaction transaction = transactions[index];
+                    BlockProcessor.AddingTxEventArgs? args = env.BlockTransactionPicker.CanAddTransaction(currentBlock, transaction,
+                        testedTxs,
+                        env.StateProvider);
+                    if (args.Action is BlockProcessor.TxAction.Stop or BlockProcessor.TxAction.Skip)
+                    {
+                        return (false, $"invalid transaction index: {index} at block number: {callHeader.Number}, Reason: {args.Reason}");
+                    }
+
+                    testedTxs.Add(transaction);
+                }
+
+                currentBlock =
+                    currentBlock.WithReplacedBody(currentBlock.Body.WithChangedTransactions(testedTxs.ToArray()));
+
 
                 ProcessingOptions processingFlags = _simulateProcessingOptions;
 
