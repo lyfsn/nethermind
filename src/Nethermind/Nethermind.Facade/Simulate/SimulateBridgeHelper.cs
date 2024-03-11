@@ -241,7 +241,7 @@ public class SimulateBridgeHelper(
 
     private BlockHeader GetCallHeader(BlockStateCall<TransactionWithSourceDetails> block, BlockHeader parent) =>
         block.BlockOverrides is not null
-            ? block.BlockOverrides.GetBlockHeader(parent, blocksConfig)
+            ? block.BlockOverrides.GetBlockHeader(parent, blocksConfig, specProvider.GetSpec(parent))
             : new BlockHeader(
                 parent.Hash!,
                 Keccak.OfAnEmptySequenceRlp,
