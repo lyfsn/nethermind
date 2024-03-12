@@ -70,7 +70,7 @@ public class ExecutionPayload : IForkValidator, IExecutionPayloadParams
     public ulong Timestamp { get; set; }
 
     private byte[][] _encodedTransactions = Array.Empty<byte[]>();
-    private byte[][]? _encodedInclusionList =null;
+    private byte[][]? _encodedInclusionList = null;
 
     /// <summary>
     /// Gets or sets an array of RLP-encoded transaction where each item is a byte list (data)
@@ -231,7 +231,8 @@ public class ExecutionPayload : IForkValidator, IExecutionPayloadParams
     /// Decodes and returns an array of <see cref="Transaction"/> from <see cref="InclusionList"/>.
     /// </summary>
     /// <Param name="inclusionList">An array of transactions to encode.</Param>
-    public void SetInclusionList(params Transaction[]? inclusionList){
+    public void SetInclusionList(params Transaction[]? inclusionList)
+    {
 
         if (inclusionList is null)
         {
