@@ -40,6 +40,7 @@ public class ExecutionPayload : IForkValidator, IExecutionPayloadParams
         Withdrawals = block.Withdrawals;
 
         SetTransactions(block.Transactions);
+        SetInclusionList(block?.InclusionList);
     }
 
     public UInt256 BaseFeePerGas { get; set; }
@@ -69,6 +70,7 @@ public class ExecutionPayload : IForkValidator, IExecutionPayloadParams
     public ulong Timestamp { get; set; }
 
     private byte[][] _encodedTransactions = Array.Empty<byte[]>();
+    private byte[][]? _encodedInclusionList =null;
 
     /// <summary>
     /// Gets or sets an array of RLP-encoded transaction where each item is a byte list (data)
@@ -91,6 +93,20 @@ public class ExecutionPayload : IForkValidator, IExecutionPayloadParams
     /// </summary>
     public Withdrawal[]? Withdrawals { get; set; }
 
+
+    /// <summary>
+    /// Gets or sets <see cref="Inclusion List"/> as defined in
+    /// <see href="https://eips.ethereum.org/EIPS/eip-7547">EIP-7547</see>.
+    /// </summary>
+    public byte[][]? InclusionList
+    {
+        get { return _encodedInclusionList; }
+        set
+        {
+            _encodedInclusionList = value;
+            _inclusionList = null;
+        }
+    }
 
     /// <summary>
     /// Gets or sets <see cref="Block.BlobGasUsed"/> as defined in
@@ -124,6 +140,7 @@ public class ExecutionPayload : IForkValidator, IExecutionPayloadParams
         try
         {
             var transactions = GetTransactions();
+            var inclusionList = GetInclusionList();
             var header = new BlockHeader(
                 ParentHash,
                 Keccak.OfAnEmptySequenceRlp,
@@ -146,10 +163,11 @@ public class ExecutionPayload : IForkValidator, IExecutionPayloadParams
                 IsPostMerge = true,
                 TotalDifficulty = totalDifficulty,
                 TxRoot = TxTrie.CalculateRoot(transactions),
+                InclusionListTxRoot = inclusionList is null ? null : TxTrie.CalculateRoot(inclusionList),
                 WithdrawalsRoot = Withdrawals is null ? null : new WithdrawalTrie(Withdrawals).RootHash,
             };
 
-            block = new(header, transactions, Array.Empty<BlockHeader>(), Withdrawals);
+            block = new(header, transactions, Array.Empty<BlockHeader>(), Withdrawals, inclusionList);
 
             return true;
         }
@@ -161,6 +179,7 @@ public class ExecutionPayload : IForkValidator, IExecutionPayloadParams
     }
 
     private Transaction[]? _transactions = null;
+    private byte[][]? _inclusionList = null;
 
     /// <summary>
     /// Decodes and returns an array of <see cref="Transaction"/> from <see cref="Transactions"/>.
@@ -190,6 +209,41 @@ public class ExecutionPayload : IForkValidator, IExecutionPayloadParams
             .ToArray();
         _transactions = transactions;
     }
+
+
+    /// <summary>
+    /// Decodes and returns an array of <see cref="Transaction"/> from <see cref="InclusionList"/>.
+    /// </summary>
+    public Transaction[]? GetInclusionList() => (_inclusionList ??= InclusionList)?.Select((t, i) =>
+            {
+                try
+                {
+                    return Rlp.Decode<Transaction>(t, RlpBehaviors.SkipTypedWrapping);
+                }
+                catch (RlpException e)
+                {
+                    throw new RlpException($"Transaction {i} is not valid", e);
+                }
+            }).ToArray();
+
+
+    /// <summary>
+    /// Decodes and returns an array of <see cref="Transaction"/> from <see cref="InclusionList"/>.
+    /// </summary>
+    /// <Param name="inclusionList">An array of transactions to encode.</Param>
+    public void SetInclusionList(params Transaction[]? inclusionList){
+
+        if (inclusionList is null)
+        {
+            InclusionList = null;
+            return;
+        }
+
+        InclusionList = inclusionList
+            .Select(t => Rlp.Encode(t, RlpBehaviors.SkipTypedWrapping).Bytes)
+            .ToArray();
+    }
+
 
     public override string ToString() => $"{BlockNumber} ({BlockHash.ToShortString()})";
 
