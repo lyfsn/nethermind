@@ -404,3 +404,7 @@ FodyWeavers.xsd
 ## Nethermind
 keystore/
 /.githooks
+
+execution-data
+*.tar.gz
+*.json
