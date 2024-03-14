@@ -1,4 +1,4 @@
-dotnet run -c release -- \
+dotnet run -c debug -- \
   --log=INFO \
   --datadir=./execution-data \
   --Init.ChainSpecPath=./chainspec.json \
