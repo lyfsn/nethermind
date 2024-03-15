@@ -33,6 +33,10 @@ namespace Nethermind.Init.Steps
             _initConfig = _api.Config<IInitConfig>();
             Hash256? expectedGenesisHash = string.IsNullOrWhiteSpace(_initConfig.GenesisHash) ? null : new Hash256(_initConfig.GenesisHash);
 
+            // print expectedGenesisHash
+            _logger.Info("--debug-- 1 - expectedGenesisHash: " + expectedGenesisHash + " --" + _initConfig.GenesisHash);
+            _logger.Info("--debug-- 1.1 - : " + _initConfig);
+
             if (_api.BlockTree is null)
             {
                 throw new StepDependencyException();
