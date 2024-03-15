@@ -35,7 +35,6 @@ namespace Nethermind.Init.Steps
 
             // print expectedGenesisHash
             _logger.Info("--debug-- 1 - expectedGenesisHash: " + expectedGenesisHash + " --" + _initConfig.GenesisHash);
-            _logger.Info("--debug-- 1.1 - : " + _initConfig);
 
             if (_api.BlockTree is null)
             {
@@ -43,20 +42,25 @@ namespace Nethermind.Init.Steps
             }
 
             IWorldState worldState = _api.WorldState!;
+            _logger.Info("--debug-- 2 - ");
 
             // if we already have a database with blocks then we do not need to load genesis from spec
             if (_api.BlockTree.Genesis is null)
             {
                 Load(worldState);
             }
+            _logger.Info("--debug-- 3 - ");
 
             ValidateGenesisHash(expectedGenesisHash, worldState);
+            _logger.Info("--debug-- 4 - ");
 
             if (!_initConfig.ProcessingEnabled)
             {
                 if (_logger.IsWarn) _logger.Warn($"Shutting down the blockchain processor due to {nameof(InitConfig)}.{nameof(InitConfig.ProcessingEnabled)} set to false");
                 await (_api.BlockchainProcessor?.StopAsync() ?? Task.CompletedTask);
             }
+            _logger.Info("--debug-- 5 - ");
+
         }
 
         protected virtual void Load(IWorldState worldState)
