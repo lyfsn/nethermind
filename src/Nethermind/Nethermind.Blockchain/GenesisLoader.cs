@@ -41,33 +41,46 @@ namespace Nethermind.Blockchain
 
         public Block Load()
         {
-            // print debug log
-            Console.WriteLine("--debug-- 2.1.1--");
+            Stopwatch stopwatch = new Stopwatch();
 
+            // Start measuring time
+            stopwatch.Start();
             Block genesis = _chainSpec.Genesis;
-            Console.WriteLine("--debug-- 2.1.2--");
+            stopwatch.Stop();
+            Console.WriteLine($"Time to retrieve the genesis block: {stopwatch.ElapsedMilliseconds} ms");
 
-
+            stopwatch.Restart(); // Restart the stopwatch for the next measurement
             Preallocate(genesis);
-            Console.WriteLine("--debug-- 2.1.3--");
+            stopwatch.Stop();
+            Console.WriteLine($"Time for memory preallocation: {stopwatch.ElapsedMilliseconds} ms");
 
-
-            // we no longer need the allocations - 0.5MB RAM, 9000 objects for mainnet
+            stopwatch.Restart();
             _chainSpec.Allocations = null;
-            Console.WriteLine("--debug-- 2.1.4--" + _chainSpec.GenesisStateUnavailable);
+            stopwatch.Stop();
+            Console.WriteLine($"Time to release allocation info: {stopwatch.ElapsedMilliseconds} ms");
 
             if (!_chainSpec.GenesisStateUnavailable)
             {
+                stopwatch.Restart();
                 _stateProvider.Commit(_specProvider.GenesisSpec, true);
+                stopwatch.Stop();
+                Console.WriteLine($"Time for state provider commit: {stopwatch.ElapsedMilliseconds} ms");
 
+                stopwatch.Restart();
                 _stateProvider.CommitTree(0);
+                stopwatch.Stop();
+                Console.WriteLine($"Time for committing the state tree: {stopwatch.ElapsedMilliseconds} ms");
 
+                stopwatch.Restart();
                 genesis.Header.StateRoot = _stateProvider.StateRoot;
+                stopwatch.Stop();
+                Console.WriteLine($"Time to set state root: {stopwatch.ElapsedMilliseconds} ms");
             }
-            Console.WriteLine("--debug-- 2.1.5--");
 
+            stopwatch.Restart();
             genesis.Header.Hash = genesis.Header.CalculateHash();
-            Console.WriteLine("--debug-- 2.1.6--");
+            stopwatch.Stop();
+            Console.WriteLine($"Time to calculate and set block header hash: {stopwatch.ElapsedMilliseconds} ms");
 
             return genesis;
         }
