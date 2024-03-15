@@ -15,6 +15,7 @@ using Nethermind.Evm.TransactionProcessing;
 using Nethermind.Specs.ChainSpecStyle;
 using Nethermind.State;
 using Nethermind.Consensus.BeaconBlockRoot;
+using System.Diagnostics;
 
 namespace Nethermind.Blockchain
 {
