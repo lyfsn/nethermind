@@ -70,6 +70,7 @@ namespace Nethermind.Init.Steps
             if (_api.SpecProvider is null) throw new StepDependencyException(nameof(_api.SpecProvider));
             if (_api.DbProvider is null) throw new StepDependencyException(nameof(_api.DbProvider));
             if (_api.TransactionProcessor is null) throw new StepDependencyException(nameof(_api.TransactionProcessor));
+            _logger.Info("--debug-- 2.1 - ");
 
             Block genesis = new GenesisLoader(
                 _api.ChainSpec,
@@ -77,6 +78,7 @@ namespace Nethermind.Init.Steps
                 worldState,
                 _api.TransactionProcessor)
                 .Load();
+            _logger.Info("--debug-- 2.2 - ");
 
             ManualResetEventSlim genesisProcessedEvent = new(false);
 
@@ -86,10 +88,12 @@ namespace Nethermind.Init.Steps
                 _api.BlockTree.NewHeadBlock -= GenesisProcessed;
                 genesisProcessedEvent.Set();
             }
+            _logger.Info("--debug-- 2.3 - ");
 
             _api.BlockTree.NewHeadBlock += GenesisProcessed;
             _api.BlockTree.SuggestBlock(genesis);
             bool genesisLoaded = genesisProcessedEvent.Wait(_genesisProcessedTimeout);
+            _logger.Info("--debug-- 2.4 - ");
 
             if (!genesisLoaded)
             {
