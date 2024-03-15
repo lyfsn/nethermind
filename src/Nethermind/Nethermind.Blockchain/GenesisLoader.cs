@@ -41,11 +41,20 @@ namespace Nethermind.Blockchain
 
         public Block Load()
         {
+            // print debug log
+            Console.WriteLine("--debug-- 2.1.1--");
+
             Block genesis = _chainSpec.Genesis;
+            Console.WriteLine("--debug-- 2.1.2--");
+
+
             Preallocate(genesis);
+            Console.WriteLine("--debug-- 2.1.3--");
+
 
             // we no longer need the allocations - 0.5MB RAM, 9000 objects for mainnet
             _chainSpec.Allocations = null;
+            Console.WriteLine("--debug-- 2.1.4--" + _chainSpec.GenesisStateUnavailable);
 
             if (!_chainSpec.GenesisStateUnavailable)
             {
@@ -55,8 +64,10 @@ namespace Nethermind.Blockchain
 
                 genesis.Header.StateRoot = _stateProvider.StateRoot;
             }
+            Console.WriteLine("--debug-- 2.1.5--");
 
             genesis.Header.Hash = genesis.Header.CalculateHash();
+            Console.WriteLine("--debug-- 2.1.6--");
 
             return genesis;
         }
