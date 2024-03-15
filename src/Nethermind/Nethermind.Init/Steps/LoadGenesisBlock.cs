@@ -110,8 +110,6 @@ namespace Nethermind.Init.Steps
             if (_api.BlockTree is null) throw new StepDependencyException(nameof(_api.BlockTree));
 
             BlockHeader genesis = _api.BlockTree.Genesis ?? throw new NullReferenceException("Genesis block is null");
-            // print expectedGenesisHash
-            _logger.Info("--debug-- 2 - expectedGenesisHash: " + expectedGenesisHash + " -- genesis.Hash: " + genesis.Hash);
             if (expectedGenesisHash is not null && genesis.Hash != expectedGenesisHash)
             {
                 if (_logger.IsWarn) _logger.Warn(worldState.DumpState());
