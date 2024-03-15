@@ -1,7 +1,7 @@
 dotnet run -c debug -- \
   --log=INFO \
   --datadir=./execution-data \
-  --cfg=none.cfg \
+  --config=none.cfg \
   --Init.ChainSpecPath=./chainspec.json \
   --Init.WebSocketsEnabled=true \
   --JsonRpc.Enabled=true \
